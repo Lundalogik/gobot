@@ -1,14 +1,14 @@
 # Description:
 #   Keeps track of our sign-ups
 #
-#   Set the environment variable HUBOT_SHIP_EXTRA_SQUIRRELS (to anything)
-#   for additional motivation
-#
 # Dependencies:
 #   None
 #
 # Commands:
-#   sign-ups [timeframe] - shows the number of sign-ups for timeframe
+#   sign-ups [time frame] - shows the number of sign-ups for time frame.
+#   Avialable time frames can be found here:
+#   https://keen.io/docs/data-analysis/timeframe/
+#   examples: Today, Yesterday, last_2_months, this_week
 #
 # Author:
 #   fpe
@@ -36,8 +36,9 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         if err.code == "TimeframeDefinitionError"
           msg.send "
-          You used a timeframe I can't understand, please use
-          a relative time frame from
-          https://keen.io/docs/data-analysis/timeframe/"
+You used a time frame I can't understand,
+please use a relative time frame from
+https://keen.io/docs/data-analysis/timeframe/ \n
+Examples: Today, Yesterday, last_2_months, this_week"
       else
         msg.send "We had #{res.result} sign-ups #{timeframe}"
