@@ -8,7 +8,7 @@
 #   None
 #
 # Commands:
-#   sign-ups - shows the number of sign-ups for today
+#   sign-ups [timeframe] - shows the number of sign-ups for timeframe
 #
 # Author:
 #   fpe
@@ -23,16 +23,16 @@ module.exports = (robot) ->
     readKey:  process.env.KEEN_READ_KEY
     masterKey:  process.env.KEEN_MASTER_KEY
   )
-  robot.respond /sign-ups today/i, (msg) ->
-    console.log 'Checking for sign-ups for today'
+
+  robot.respond /sign[\s-]?ups (.*)/i, (msg) ->
+
+    timeframe = msg.match[1]
     countSignUps = new Keen.Query "count",
       eventCollection: "Marketsite-TryOutSubmited"
-      timeframe: "today"
-    console.log 'Will run question', countSignUps
-    keenClient.run(countSignUps, (err, res) ->
-      console.log 'Some result recived'
+      timeframe: timeframe
+
+    keenClient.run countSignUps, (err, res) ->
       if err
         console.log 'Keen error:', err
       else
-        msg.send "We have #{res.result} sign-ups today"
-    )
+        msg.send "We had #{res.result} sign-ups #{timeframe}"
