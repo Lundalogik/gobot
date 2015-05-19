@@ -10,5 +10,6 @@
 
 module.exports = (robot) ->
 
-  robot.hear /:boom: Boom! Set up a test account for/i, (msg) ->
+  robot.hear /:boom: Boom! Set up a test account for (.*) /i, (msg) ->
+    email = res.match[1]
     msg.send("That is a sign up!")
