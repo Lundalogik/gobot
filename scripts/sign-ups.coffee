@@ -31,6 +31,7 @@ module.exports = (robot) ->
       timeframe: "today"
     console.log 'Will run question'
     msg.send keenClient.run countSignUps, (err, res) ->
+      console.log 'Some result recived'
       if err
         console.log 'Keen error'
       else
