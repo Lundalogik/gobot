@@ -25,13 +25,13 @@ module.exports = (robot) ->
   )
 
   robot.respond /sign-ups today/i, (msg) ->
-
+    console.log 'Checking for sign-ups for today'
     countSignUps = new Keen.Query "count",
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: "today"
 
     keenClient.run countSignUps, (err, res) ->
       if err
-        console.log('Keen error')
+        console.log 'Keen error'
       else
         msg.send("We have #{res.result} sign-ups today")
