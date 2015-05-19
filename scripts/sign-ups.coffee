@@ -19,7 +19,7 @@ Keen = require 'keen-js'
 module.exports = (robot) ->
 
   keenClient = new Keen(
-    projectID: process.env.KEEN_PROJECT_ID
+    projectId: process.env.KEEN_PROJECT_ID
     readKey:  process.env.KEEN_READ_KEY
     masterKey:  process.env.KEEN_MASTER_KEY
   )
