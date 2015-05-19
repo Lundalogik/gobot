@@ -21,7 +21,7 @@ module.exports = (robot) ->
     masterKey:  process.env.KEEN_MASTER_KEY
   )
 
-  robot.respond /sign[\s-]?ups (.*)/i, (msg) ->
+  robot.respond /sign[\s-]?ups ?(.*)/i, (msg) ->
 
     timeframe = if msg.match[1] then msg.match[1] else "today"
     countSignUps = new Keen.Query "count",
