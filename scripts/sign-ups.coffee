@@ -25,7 +25,7 @@ module.exports = (robot) ->
   )
 
   robot.respond /sign-ups today/i, (msg) ->
-    email = res.match[1]
+
     countSignUps = new Keen.Query "count",
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: "today"
