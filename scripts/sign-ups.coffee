@@ -30,8 +30,9 @@ module.exports = (robot) ->
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: "today"
 
-    keenClient.run countSignUps, (err, res) ->
+    msg.send keenClient.run countSignUps, (err, res) ->
       if err
         console.log 'Keen error'
       else
-        msg.send("We have #{res.result} sign-ups today")
+        console.log "We have #{res.result} sign-ups today"
+        return "We have #{res.result} sign-ups today"
