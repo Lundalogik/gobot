@@ -34,5 +34,10 @@ module.exports = (robot) ->
     keenClient.run countSignUps, (err, res) ->
       if err
         console.log 'Keen error:', err
+        if err.code == "TimeframeDefinitionError"
+          msg.send "
+          You used a timeframe I can't understand, please use
+          a relative time frame from
+          https://keen.io/docs/data-analysis/timeframe/"
       else
         msg.send "We had #{res.result} sign-ups #{timeframe}"
