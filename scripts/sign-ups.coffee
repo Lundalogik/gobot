@@ -21,21 +21,43 @@ module.exports = (robot) ->
     masterKey:  process.env.KEEN_MASTER_KEY
   )
 
+  timeFrameErrorMsg = "You used a time frame I can't understand,
+                      please use a relative time frame from
+                      https://keen.io/docs/data-analysis/timeframe/ \n
+                      Examples: Today, Yesterday, last_2_months, this_week"
+
+
+
+  # Handels goals for Sign-ups
+  robot.respond /sign[\s-]?up goals ?(.*)/i/i, (msg) ->
+    timeframe = if msg.match[1] then msg.match[1] else "today"
+    sumGoals = new Keen.Query "sum",
+      eventCollection: "Goal-signups"
+      targetProperty: "value"
+      timeframe: timeframe
+      timezone: "Europe/Stockholm"
+
+    keenClient.run sumGoals, (err, res) ->
+      if err
+        console.log 'Keen error:', err
+        msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
+      else
+        msg.send "The goal for #{timeframe.replace('_',' ')}
+                  was #{res.result} sign-ups"
+
+
+  # Handels sign-ups
   robot.respond /sign[\s-]?ups ?(.*)/i, (msg) ->
 
     timeframe = if msg.match[1] then msg.match[1] else "today"
     countSignUps = new Keen.Query "count",
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: timeframe
+      timezone: "Europe/Stockholm"
 
     keenClient.run countSignUps, (err, res) ->
       if err
         console.log 'Keen error:', err
-        if err.code == "TimeframeDefinitionError"
-          msg.send "
-You used a time frame I can't understand,
- please use a relative time frame from
- https://keen.io/docs/data-analysis/timeframe/ \n
-Examples: Today, Yesterday, last_2_months, this_week"
+        msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
         msg.send "We had #{res.result} sign-ups #{timeframe}"
