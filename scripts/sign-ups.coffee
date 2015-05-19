@@ -29,7 +29,7 @@ module.exports = (robot) ->
 
 
   # Handels goals for Sign-ups
-  robot.respond /sign[\s-]?up goals ?(.*)/i/i, (msg) ->
+  robot.respond /sign[\s-]?up goals ?(.*)/i, (msg) ->
     timeframe = if msg.match[1] then msg.match[1] else "today"
     sumGoals = new Keen.Query "sum",
       eventCollection: "Goal-signups"
