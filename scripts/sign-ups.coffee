@@ -1,15 +1,37 @@
 # Description:
-#   Example scripts for you to examine and try out.
+#   Keeps track of our sign-ups
 #
-# Notes:
-#   They are commented out by default, because most of them are pretty silly and
-#   wouldn't be useful and amusing enough for day to day huboting.
-#   Uncomment the ones you want to try and experiment with.
+#   Set the environment variable HUBOT_SHIP_EXTRA_SQUIRRELS (to anything)
+#   for additional motivation
 #
-#   These are from the scripting documentation: https://github.com/github/hubot/blob/master/docs/scripting.md
+# Dependencies:
+#   None
+#
+# Commands:
+#   sign-ups - shows the number of sign-ups for today
+#
+# Author:
+#   fpe
+
+Keen = require 'keen-js'
+
 
 module.exports = (robot) ->
 
-  robot.hear /:boom: Boom! Set up a test account for (.*) /i, (msg) ->
+  keenClient = Keen.configure(
+    projectID: process.env.KEEN_PROJECT_ID
+    readKey:  process.env.KEEN_READ_KEY
+    masterKey:  process.env.KEEN_MASTER_KEY
+  )
+
+  robot.respond /sign-ups today/i, (msg) ->
     email = res.match[1]
-    msg.send("That is a sign up!")
+    countSignUps = new Keen.Query "count",
+      eventCollection: "Marketsite-TryOutSubmited"
+      timeframe: "today"
+
+    keenClient.run countSignUps, (err, res) ->
+      if err
+        console.log('Keen error')
+      else
+        msg.send("We have #{res.result} sign-ups today")
