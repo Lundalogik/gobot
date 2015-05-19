@@ -23,7 +23,7 @@ module.exports = (robot) ->
     readKey:  process.env.KEEN_READ_KEY
     masterKey:  process.env.KEEN_MASTER_KEY
   )
-
+  console.log keenClient
   robot.respond /sign-ups today/i, (msg) ->
     console.log 'Checking for sign-ups for today'
     countSignUps = new Keen.Query "count",
