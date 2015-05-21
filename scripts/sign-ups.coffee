@@ -42,7 +42,7 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
-        msg.send "The goal for #{timeframe.replace('_',' ')} was #{res.result} sign-ups"
+        msg.send "The goal for #{timeframe.replace('_',' ')} was #{res.result.toFixed(1)} sign-ups"
 
 
   # Handels sign-ups
