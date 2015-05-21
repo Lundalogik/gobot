@@ -22,9 +22,9 @@ module.exports = (robot) ->
   )
 
   timeFrameErrorMsg = "You used a time frame I can't understand,
-                      please use a relative time frame from
-                      https://keen.io/docs/data-analysis/timeframe/ \n
-                      Examples: Today, Yesterday, last_2_months, this_week"
+  please use a relative time frame from
+  https://keen.io/docs/data-analysis/timeframe/ \n
+  Examples: Today, Yesterday, last_2_months, this_week"
 
 
 
@@ -32,8 +32,8 @@ module.exports = (robot) ->
   robot.respond /sign[\s-]?up goals ?(.*)/i, (msg) ->
     timeframe = if msg.match[1] then msg.match[1] else "today"
     sumGoals = new Keen.Query "sum",
-      eventCollection: "Goal-signups"
-      targetProperty: "value"
+      eventCollection: "Goal-signups-daily-weekendcompensated"
+      targetProperty: "day_goal"
       timeframe: timeframe
       timezone: "Europe/Stockholm"
 
@@ -42,8 +42,7 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
-        msg.send "The goal for #{timeframe.replace('_',' ')}
-                  was #{res.result} sign-ups"
+        msg.send "The goal for #{timeframe.replace('_',' ')} was #{res.result} sign-ups"
 
 
   # Handels sign-ups
@@ -60,4 +59,4 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
-        msg.send "We had #{res.result} sign-ups #{timeframe}"
+        msg.send "We had #{res.result} sign-ups #{timeframe.replace('_',' ')}"
