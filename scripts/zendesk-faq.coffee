@@ -12,8 +12,8 @@
 
 
 module.exports = (robot) ->
-  zendeskURL = 'https://lime-go.zendesk.com'
 
+  zendeskURL = 'https://lime-go.zendesk.com'
   search_url = '/api/v2/help_center/articles/search.json?query='
 
   class FAQArticle
@@ -22,7 +22,8 @@ module.exports = (robot) ->
 
     serialize: () ->
       return "#{@title} \n #{@body}..."
-  # Handels goals for Sign-ups
+
+
   robot.respond /faq ?(.*)/i, (msg) ->
     console.log "Running FAQ"
     robot.http('#{zendeskURL}#{search_url}#{encodeURIComponent(msg)}')
@@ -31,8 +32,9 @@ module.exports = (robot) ->
       console.log "HTTP request done"
       if err
         msg.send "Something went wrong: #{err}"
+        return null
 
-      console.log "HTTP answer", body
+      console.log "HTTP answer", res
       data = JSON.parse body
       articlesArray = (new FAQArticle(article).serialize() for article in data if article.result_type == "article")
 
