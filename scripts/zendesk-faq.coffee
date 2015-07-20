@@ -17,7 +17,7 @@ module.exports = (robot) ->
   search_url = '/api/v2/help_center/articles/search.json?query='
 
   class FAQArticle
-    constructor(rawArticle) ->
+    constructor: (rawArticle) ->
       {@title, @body} = rawArticle
 
     serialize: () ->
