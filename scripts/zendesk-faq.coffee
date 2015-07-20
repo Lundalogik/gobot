@@ -47,7 +47,7 @@ module.exports = (robot) ->
       if data.count > data.per_page
         msg.send "I found #{data.count} articles, showing you the #{data.per_page} best hits"
 
-      attachments = (new FAQArticle(article).toSlackAttachment for article in data.results).reduce (x, y) -> "#{x} \n #{y}"
+      attachments = (new FAQArticle(article).toSlackAttachment for article in data.results)
 
       robot.emit 'slack.attachment',
         message: "I found the following FAQ articles"
