@@ -50,7 +50,7 @@ module.exports = (robot) ->
       attachments = (new FAQArticle(article).toSlackAttachment for article in data.results)
       console.log attachments
       robot.emit 'slack.attachment',
-        message: "I found the following FAQ articles"
+        message: msg.message
         content:
           text: "Attachment text"
           fallback: "Attachment fallback"
