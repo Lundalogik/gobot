@@ -23,6 +23,9 @@ module.exports = (robot) ->
     serialize: () ->
       return "#{@title} <#{@html_url}|read more...>"
 
+    toSlackAttachment: () ->
+      return {title:@title, value:@body, title_link:@html_url}
+
 
   robot.respond /faq ?(.*)/i, (msg) ->
 
@@ -44,6 +47,8 @@ module.exports = (robot) ->
       if data.count > data.per_page
         msg.send "I found #{data.count} articles, showing you the #{data.per_page} best hits"
 
-      articleString = (new FAQArticle(article).serialize() for article in data.results).reduce (x, y) -> "#{x} \n #{y}"
+      attachments = (new FAQArticle(article).toSlackAttachment for article in data.results).reduce (x, y) -> "#{x} \n #{y}"
 
-      msg.send articleString
+      robot.emit 'slack.attachment',
+        message: "I found the following FAQ articles"
+        content: attachments
