@@ -21,7 +21,7 @@ module.exports = (robot) ->
       {@title, @body, @html_url} = rawArticle
 
     serialize: () ->
-      return "#{@title} <read more | #{@html_url}>"
+      return "#{@title} <#{@html_url}|read more...>"
 
 
   robot.respond /faq ?(.*)/i, (msg) ->
