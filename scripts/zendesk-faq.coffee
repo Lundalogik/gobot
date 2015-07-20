@@ -24,7 +24,7 @@ module.exports = (robot) ->
       return "#{@title} <#{@html_url}|read more...>"
 
     toSlackAttachment: () ->
-      return {title:@title, value:@body, title_link:@html_url}
+      return  {title: @title, value: @body, title_link:@html_url}
 
 
   robot.respond /faq ?(.*)/i, (msg) ->
@@ -47,16 +47,23 @@ module.exports = (robot) ->
       if data.count > data.per_page
         msg.send "I found #{data.count} articles, showing you the #{data.per_page} best hits"
 
-      attachments = (new FAQArticle(article).toSlackAttachment for article in data.results)
+      attachments = (new FAQArticle(article).toSlackAttachment() for article in data.results)
       console.log attachments
       console.log  msg.message
       robot.emit 'slack.attachment',
         message: msg.message
-        content:
+        content:[
           # see https://api.slack.com/docs/attachments
           text: "Attachment text"
           fallback: "Attachment fallback"
           fields: [{
             title: "Field title"
             value: "Field value"
-          }]
+          }],
+              text: "Attachment text"
+              fallback: "Attachment fallback"
+              fields: [{
+                title: "Field title"
+                value: "Field value"
+              }]
+        ]
