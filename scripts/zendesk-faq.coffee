@@ -18,10 +18,10 @@ module.exports = (robot) ->
 
   class FAQArticle
     constructor: (rawArticle) ->
-      {@title, @body, @url} = rawArticle
+      {@title, @body, @html_url} = rawArticle
 
     serialize: () ->
-      return "#{@title} <read more | #{@url}>"
+      return "#{@title} <read more | #{@html_url}>"
 
 
   robot.respond /faq ?(.*)/i, (msg) ->
@@ -36,11 +36,14 @@ module.exports = (robot) ->
       if err
         msg.send "Something went horribly wrong: #{err}"
         return
+
       data = JSON.parse body
       if not data.results.length
         msg.send "Couldn't find anything in the FAQ regarding '#{query}'"
         return
-      console.log data
-      articlesArray = (new FAQArticle(article).serialize() for article in data.results)
+      if data.count > data.per_page
+        msg.send "I found #{data.count} articles, showing you the #{data.per_page} best hits"
 
-      msg.send articlesArray.toString()
+      articleString = (new FAQArticle(article).serialize() for article in data.results).reduce (x, y) -> "#{x} \n #{y}"
+
+      msg.send articleString
