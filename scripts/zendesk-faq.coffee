@@ -48,7 +48,9 @@ module.exports = (robot) ->
         msg.send "I found #{data.count} articles, showing you the #{data.per_page} best hits"
 
       attachments = (new FAQArticle(article).toSlackAttachment for article in data.results)
-
+      console.log attachments
       robot.emit 'slack.attachment',
         message: "I found the following FAQ articles"
-        content: attachments
+        content:
+          text: "Attachment text"
+          fallback: "Attachment fallback"
