@@ -51,6 +51,12 @@ module.exports = (robot) ->
       console.log attachments
       console.log  msg.message
       robot.emit 'slack.attachment',
+        message: msg.message
         content:
+          # see https://api.slack.com/docs/attachments
           text: "Attachment text"
           fallback: "Attachment fallback"
+          fields: [{
+            title: "Field title"
+            value: "Field value"
+          }]
