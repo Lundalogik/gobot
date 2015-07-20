@@ -52,4 +52,5 @@ module.exports = (robot) ->
       console.log  msg.message
       robot.emit 'slack.attachment',
         message: msg.message
-        content: attachments
+        content:
+          attachments: attachments
