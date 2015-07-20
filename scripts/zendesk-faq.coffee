@@ -38,6 +38,6 @@ module.exports = (robot) ->
 
       console.log "HTTP answer", body
       data = JSON.parse body
-      articlesArray = (new FAQArticle(article).serialize() for article in data if article.result_type == "article")
+      articlesArray = (new FAQArticle(article).serialize() for article in data.results if article.result_type == "article")
 
       msg.send articlesArray.toString()
