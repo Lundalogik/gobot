@@ -36,7 +36,7 @@ module.exports = (robot) ->
         msg.send "Something went wrong: #{err}"
         return null
 
-      console.log "HTTP answer", res
+      console.log "HTTP answer", body
       data = JSON.parse body
       articlesArray = (new FAQArticle(article).serialize() for article in data if article.result_type == "article")
 
