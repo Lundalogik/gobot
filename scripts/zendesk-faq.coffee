@@ -30,10 +30,10 @@ module.exports = (robot) ->
     .get() (err, res, body) ->
       console.log "HTTP request done"
       if err
-        res.send "Something went wrong: #{err}"
+        msg.send "Something went wrong: #{err}"
 
       console.log "HTTP answer", body
       data = JSON.parse body
       articlesArray = (new FAQArticle(article).serialize() for article in data if article.result_type == "article")
 
-      res.send articlesArray.toString()
+      msg.send articlesArray.toString()
