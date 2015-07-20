@@ -26,7 +26,9 @@ module.exports = (robot) ->
 
   robot.respond /faq ?(.*)/i, (msg) ->
     console.log "Running FAQ"
-    robot.http('#{zendeskURL}#{search_url}#{encodeURIComponent(msg)}')
+    url = "#{zendeskURL}#{search_url}#{encodeURIComponent(msg)}"
+    console.log url
+    robot.http(url)
     .header('Accept', 'application/json')
     .get() (err, res, body) ->
       console.log "HTTP request done"
