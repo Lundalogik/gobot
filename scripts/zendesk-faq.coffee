@@ -28,12 +28,13 @@ module.exports = (robot) ->
       htmlFreeBody = htmlFreeBody.replace("&nbsp;", "\n")
       return  {title: @title, text: htmlFreeBody, title_link:@html_url}
 
+  respondToFAQQuery = (query, channel) ->
 
-  robot.respond /faq ?(.*)/i, (msg) ->
+    sendMsg = (msg) ->
+      robot.messageRoom channel, msg
 
-    query = msg.match[1]
     if not query
-      msg.send "You didn't provide a search query!"
+      sendMsg "You didn't provide a search query!"
       return
     robot.http("#{zendeskURL}#{search_url}#{encodeURIComponent(query)}")
     .header('Accept', 'application/json')
@@ -44,15 +45,37 @@ module.exports = (robot) ->
 
       data = JSON.parse body
       if not data.results.length
-        msg.send "Couldn't find anything in the FAQ regarding '#{query}'"
+        sendMsg "Couldn't find anything in the FAQ regarding '#{query}'"
         return
       if data.count > data.per_page
-        msg.send "I found #{data.count} articles, showing you the #{data.per_page} best hits"
+        sendMsg "I found #{data.count} articles, showing you the #{data.per_page} best hits"
 
       attachments = (new FAQArticle(article).toSlackAttachment() for article in data.results)
-      console.log attachments
-      console.log  msg.message
+
       robot.emit 'slack.attachment',
-        message: msg.message
+        room: channel
         content:
           attachments: attachments
+
+  robot.respond /faq ?(.*)/i, (msg) ->
+    query = msg.match[1]
+    channel = msg.message.room
+    respondToFAQQuery(query, channel)
+
+  robot.router.post '/hubot/faq', (req, res) ->
+
+    if not req.body?
+      res.send 500
+      return
+    data = req.body
+
+    token = data.token
+    channel = data.channel_name
+    query = data.text
+
+    #if not token == TOKEN
+    #  return
+
+    respondToFAQQuery(query, channel)
+
+    res.send 200
