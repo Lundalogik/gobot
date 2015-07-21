@@ -53,7 +53,7 @@ module.exports = (robot) ->
       attachments = (new FAQArticle(article).toSlackAttachment() for article in data.results)
 
       robot.emit 'slack.attachment',
-        room: channel
+        channel: channel
         content:
           attachments: attachments
 
@@ -64,7 +64,7 @@ module.exports = (robot) ->
 
   robot.router.post '/hubot/faq', (req, res) ->
 
-    console.log req.body
+    console.log req.body.channel_name
     if not req.body?
       res.send 500
       return
