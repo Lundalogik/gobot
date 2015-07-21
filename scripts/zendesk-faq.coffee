@@ -29,7 +29,7 @@ module.exports = (robot) ->
       return  {title: @title, text: htmlFreeBody, title_link:@html_url}
 
   respondToFAQQuery = (query, channel) ->
-
+    message = {}
     message.room = channel
 
     sendMsg = (msg) ->
