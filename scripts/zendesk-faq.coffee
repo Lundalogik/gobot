@@ -64,9 +64,11 @@ module.exports = (robot) ->
 
   robot.router.post '/hubot/faq', (req, res) ->
 
+    console.log req.body
     if not req.body?
       res.send 500
       return
+
     data = req.body
 
     token = data.token
