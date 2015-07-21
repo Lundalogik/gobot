@@ -80,6 +80,5 @@ module.exports = (robot) ->
     #if not token == TOKEN
     #  return
 
+    res.send "Telling Gobot to search the faq!"
     respondToFAQQuery(query, channel)
-
-    res.send 200
