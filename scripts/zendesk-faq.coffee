@@ -24,7 +24,8 @@ module.exports = (robot) ->
       return "#{@title} <#{@html_url}|read more...>"
 
     toSlackAttachment: () ->
-      return  {title: @title, text: @body, title_link:@html_url}
+      htmlFreeBody = @body.replace(/(<([^>]+)>)/ig, "")
+      return  {title: @title, text: htmlFreeBody, title_link:@html_url}
 
 
   robot.respond /faq ?(.*)/i, (msg) ->
