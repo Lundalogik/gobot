@@ -30,6 +30,8 @@ module.exports = (robot) ->
 
   respondToFAQQuery = (query, channel) ->
 
+    message.room = channel
+
     sendMsg = (msg) ->
       robot.messageRoom channel, msg
 
@@ -53,7 +55,7 @@ module.exports = (robot) ->
       attachments = (new FAQArticle(article).toSlackAttachment() for article in data.results)
 
       robot.emit 'slack.attachment',
-        channel: channel
+        message: message
         content:
           attachments: attachments
 
