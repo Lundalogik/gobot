@@ -25,6 +25,7 @@ module.exports = (robot) ->
 
     toSlackAttachment: () ->
       htmlFreeBody = @body.replace(/(<([^>]+)>)/ig, "")
+      htmlFreeBody = htmlFreeBody.replace("&nbsp;", "\n")
       return  {title: @title, text: htmlFreeBody, title_link:@html_url}
 
 
