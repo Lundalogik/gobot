@@ -11,19 +11,24 @@
 #   fpe
 module.exports = (robot) ->
   # Handels sign-ups
-  robot.hear /([0-9]{1,4})\s?(dp|douche points?|douchepoints?)(\s|\still\s|\sto\s)(@[a-ö]+)/ig, (msg) ->
-    new_points = msg.match[1]
-    douche = msg.match[4].toLowerCase()
+  robot.hear /([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)(?:\s|\still\s|\sto\s)(@[a-ö]+)/i, (msg) ->
+    new_points = parseInt(msg.match[1])
+    console.log msg.match
+    douche = msg.match[2].toLowerCase()
     sender = msg.message.user.name.toLowerCase()
     douchepoints = {}
     douchepoints ?= robot.brain.get('douchepoints')
+    douchepoints[douche] ?= 0
 
     if douche == "#{@sender}"
-      msg.send "Cudos for trying to give yourself douche points!
-      Not even Kevin Federline would have tried that! Minus 50dp for you!"
       douchepoints[douche] -= 50
+      robot.brain.set 'douchepoints', douchepoints
+      msg.send "Cudos for trying to give yourself douche points!
+Not even Kevin Federline would have tried that! Minus 50dp for you!"
+
       return
 
+    douchepoints[douche] += new_points
+    robot.brain.set 'douchepoints', douchepoints
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
-    a total of #{douchepoints[douche]}"
-    douchepoints[douche] += points
+a total of #{douchepoints[douche]}"
