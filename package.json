@@ -21,7 +21,8 @@
     "hubot-slack-attachment": "^1.0.1",
     "hubot-trello": "^0.1.1",
     "hubot-youtube": "^0.1.2",
-    "keen-js": "^3.2.1"
+    "keen-js": "^3.2.1",
+    "lodash": "^3.10.1"
   },
   "engines": {
     "node": "0.10.x"
