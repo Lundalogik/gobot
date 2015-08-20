@@ -64,7 +64,7 @@ module.exports = (robot) ->
       nbr = numberOfIntems ? 3
       return _.chain(@board)
       .values()
-      .sortByOrder('points', 'asc')
+      .sortByOrder('points', 'desc')
       .splice(0, numberOfIntems)
       .value()
 
@@ -99,12 +99,12 @@ module.exports = (robot) ->
       return
 
     highscoreBoard.awardPoints(douche, new_points)
-    console.log highscoreBoard
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
  a total of #{highscoreBoard.getScoreForDouche(douche)}"
 
   robot.respond /(douche highscore|what's the current douche off?|douche score)\s?([0-9])?/i, (msg) ->
     nbrOfItems = parseInt(msg.match[2]) ? 3
     console.log highscoreBoard.getHighScore(nbrOfItems)
-    msg.send _.map highscoreBoard.getHighScore(nbrOfItems), (douche) ->
-      return "#{douche.name}: #{douche.points}dp \n"
+    msg.send _.map highscoreBoard.getHighScore(nbrOfItems), (douche, index) ->
+      return "#{index+1}. #{douche.name}: #{douche.points}dp"
+    .join("\n")
