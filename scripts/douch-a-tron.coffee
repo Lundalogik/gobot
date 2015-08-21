@@ -84,27 +84,36 @@ module.exports = (robot) ->
       return
 
   highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
-
-  # Handels sign-ups
-  robot.hear /([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)(?:\s|\still\s|\sto\s)(@[a-ö]+)/i, (msg) ->
-    new_points = parseInt(msg.match[1])
-    console.log msg.match
-    douche = msg.match[2].toLowerCase()
-    sender = msg.message.user.name.toLowerCase()
-
+  awardPoints = (msg, douche, new_points, sender) ->
     if douche == "#{@sender}"
       msg.send "Cudos for trying to give yourself douche points!
  Not even Kevin Federline would have tried that! Minus 50dp for you!"
       highscoreBoard.removePoints(douche, 50)
       return
-
     highscoreBoard.awardPoints(douche, new_points)
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
  a total of #{highscoreBoard.getScoreForDouche(douche)}"
 
-  robot.respond /(douche highscore|what's the current douche off?|douche score)\s?([0-9])?/i, (msg) ->
-    nbrOfItems = parseInt(msg.match[2]) ? 3
-    console.log highscoreBoard.getHighScore(nbrOfItems)
+  # Handels sign-ups
+  robot.hear /([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)(?:\s|\still\s|\sto\s)(@[a-ö]+)/i, (msg) ->
+    new_points = parseInt(msg.match[1])
+    douche = msg.match[2].toLowerCase()
+    sender = msg.message.user.name.toLowerCase()
+    awardPoints(msg, douche, new_points, sender)
+
+  robot.hear /(@[a-ö]+):?\s([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)/i, (msg) ->
+    new_points = parseInt(msg.match[2])
+    douche = msg.match[1].toLowerCase()
+    sender = msg.message.user.name.toLowerCase()
+    awardPoints(msg, douche, new_points, sender)
+
+  robot.respond /(douche highscore|what's the current douche off)\s?([0-9])?/i, (msg) ->
+    nbrOfItems = parseInt(msg.match[2] ? 3)
     msg.send _.map highscoreBoard.getHighScore(nbrOfItems), (douche, index) ->
       return "#{index+1}. #{douche.name}: #{douche.points}dp"
     .join("\n")
+
+  robot.respond /(?:give|show)?(?:me)?(?:douche points|dp|dps|)\s(?:for)?(@[a-ö]+)/i, (msg) ->
+    douche = msg.match[1]
+    points = highscoreBoard.getScoreForDouche(douche)
+    msg.send "#{douche} has currently #{points}dp"
