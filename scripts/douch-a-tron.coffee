@@ -90,6 +90,9 @@ module.exports = (robot) ->
  Not even Kevin Federline would have tried that! Minus 50dp for you!"
       highscoreBoard.removePoints(douche, 50)
       return
+    if douche == "@ola"
+      msg.send "That boy needs a spanking, not more douchepoints!"
+      return
     highscoreBoard.awardPoints(douche, new_points)
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
  a total of #{highscoreBoard.getScoreForDouche(douche)}"
