@@ -94,14 +94,23 @@ module.exports = (robot) ->
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
  a total of #{highscoreBoard.getScoreForDouche(douche)}"
 
+
+  messagePattern1 = ///                   #begin of line
+    ([0-9]{1,4})                          #group 1: 1-4 numbers, i.e. d-points
+    \s?                                   #optional whitespace
+    (?:dp|douche points?|douchepoints?)   #dont capture. ending s optional
+    (?:\s|\still\s|\sto\s)                #dont capture. ws, ws+till, ws+to
+    (@[a-ö_-]+)                           #@username, letters and _-
+    ///i                                  #end of line and ignore case
+
   # Handels sign-ups
-  robot.hear /([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)(?:\s|\still\s|\sto\s)(@[a-ö]+)/i, (msg) ->
+  robot.hear messagePattern1, (msg) ->
     new_points = parseInt(msg.match[1])
     douche = msg.match[2].toLowerCase()
     sender = msg.message.user.name.toLowerCase()
     awardPoints(msg, douche, new_points, sender)
 
-  robot.hear /(@[a-ö]+):?\s([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)/i, (msg) ->
+  robot.hear /(@[a-ö_-]+):?\s([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)/i, (msg) ->
     new_points = parseInt(msg.match[2])
     douche = msg.match[1].toLowerCase()
     sender = msg.message.user.name.toLowerCase()
@@ -113,7 +122,7 @@ module.exports = (robot) ->
       return "#{index+1}. #{douche.name}: #{douche.points}dp"
     .join("\n")
 
-  robot.respond /(?:give|show)?(?:me)?(?:douche points|dp|dps|)\s(?:for)?(@[a-ö]+)/i, (msg) ->
+  robot.respond /(?:give|show)?(?:me)?(?:douche points|dp|dps|)\s(?:for)?(@[a-ö_-]+)/i, (msg) ->
     douche = msg.match[1]
     points = highscoreBoard.getScoreForDouche(douche)
     msg.send "#{douche} has currently #{points}dp"
