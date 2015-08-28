@@ -22,7 +22,7 @@ module.exports = (robot) ->
 
     loadFromRawData: (rawDouche) ->
       {@name, @points, @achivements} = rawDouche
-      return
+      return @
 
     addPoints: (new_points) ->
       @points += new_points
@@ -38,8 +38,11 @@ module.exports = (robot) ->
   class HighscoreBoard
     constructor: (@brain, @boardName) ->
       @board = {}
-      @brain.get(@boardName)?.map (key,value) ->
-        @board[key] = new Douche().loadFromRawData(value)
+      _.chain(@brain.get(@boardName))
+      .values()
+      .value()
+      .map (value) =>
+        @board[value.name] = new Douche().loadFromRawData(value)
 
     addUser: (doucheName, points) ->
       @board[doucheName] = new Douche(doucheName, points)
@@ -83,8 +86,9 @@ module.exports = (robot) ->
       @_save()
       return
 
-  highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
+
   awardPoints = (msg, douche, new_points, sender) ->
+    highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
     if douche == "#{@sender}"
       msg.send "Cudos for trying to give yourself douche points!
  Not even Kevin Federline would have tried that! Minus 50dp for you!"
@@ -118,11 +122,13 @@ module.exports = (robot) ->
 
   robot.respond /(douche highscore|what's the current douche off)\s?([0-9])?/i, (msg) ->
     nbrOfItems = parseInt(msg.match[2] ? 3)
+    highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
     msg.send _.map highscoreBoard.getHighScore(nbrOfItems), (douche, index) ->
       return "#{index+1}. #{douche.name}: #{douche.points}dp"
     .join("\n")
 
   robot.respond /(?:give|show)?(?:me)?(?:douche points|dp|dps|)\s(?:for)?(@[a-ö_-]+)/i, (msg) ->
     douche = msg.match[1]
+    highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
     points = highscoreBoard.getScoreForDouche(douche)
     msg.send "#{douche} has currently #{points}dp"
