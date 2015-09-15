@@ -22,7 +22,7 @@ module.exports = (robot) ->
 
     loadFromRawData: (rawDouche) ->
       {@name, @points, @achivements} = rawDouche
-      return
+      return @
 
     addPoints: (new_points) ->
       @points += new_points
@@ -38,8 +38,11 @@ module.exports = (robot) ->
   class HighscoreBoard
     constructor: (@brain, @boardName) ->
       @board = {}
-      @brain.get(@boardName)?.map (key,value) ->
-        @board[key] = new Douche().loadFromRawData(value)
+      _.chain(@brain.get(@boardName))
+      .values()
+      .value()
+      .map (value) =>
+        @board[value.name] = new Douche().loadFromRawData(value)
 
     addUser: (doucheName, points) ->
       @board[doucheName] = new Douche(doucheName, points)
@@ -83,8 +86,9 @@ module.exports = (robot) ->
       @_save()
       return
 
-  highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
+
   awardPoints = (msg, douche, new_points, sender) ->
+    highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
     if douche == "#{@sender}"
       msg.send "Cudos for trying to give yourself douche points!
  Not even Kevin Federline would have tried that! Minus 50dp for you!"
@@ -97,14 +101,23 @@ module.exports = (robot) ->
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
  a total of #{highscoreBoard.getScoreForDouche(douche)}"
 
+
+  messagePattern1 = ///                   #begin of line
+    ([0-9]{1,4})                          #group 1: 1-4 numbers, i.e. d-points
+    \s?                                   #optional whitespace
+    (?:dp|douche points?|douchepoints?)   #dont capture. ending s optional
+    (?:\s|\still\s|\sto\s)                #dont capture. ws, ws+till, ws+to
+    (@[a-ö_-]+)                           #@username, letters and _-
+    ///i                                  #end of line and ignore case
+
   # Handels sign-ups
-  robot.hear /([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)(?:\s|\still\s|\sto\s)(@[a-ö]+)/i, (msg) ->
+  robot.hear messagePattern1, (msg) ->
     new_points = parseInt(msg.match[1])
     douche = msg.match[2].toLowerCase()
     sender = msg.message.user.name.toLowerCase()
     awardPoints(msg, douche, new_points, sender)
 
-  robot.hear /(@[a-ö]+):?\s([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)/i, (msg) ->
+  robot.hear /(@[a-ö_-]+):?\s([0-9]{1,4})\s?(?:dp|douche points?|douchepoints?)/i, (msg) ->
     new_points = parseInt(msg.match[2])
     douche = msg.match[1].toLowerCase()
     sender = msg.message.user.name.toLowerCase()
@@ -112,11 +125,13 @@ module.exports = (robot) ->
 
   robot.respond /(douche highscore|what's the current douche off)\s?([0-9])?/i, (msg) ->
     nbrOfItems = parseInt(msg.match[2] ? 3)
+    highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
     msg.send _.map highscoreBoard.getHighScore(nbrOfItems), (douche, index) ->
       return "#{index+1}. #{douche.name}: #{douche.points}dp"
     .join("\n")
 
-  robot.respond /(?:give|show)?(?:me)?(?:douche points|dp|dps|)\s(?:for)?(@[a-ö]+)/i, (msg) ->
+  robot.respond /(?:give|show)?(?:me)?(?:douche points|dp|dps|)\s(?:for)?(@[a-ö_-]+)/i, (msg) ->
     douche = msg.match[1]
+    highscoreBoard = new HighscoreBoard(robot.brain, 'douchepoints')
     points = highscoreBoard.getScoreForDouche(douche)
     msg.send "#{douche} has currently #{points}dp"
