@@ -95,7 +95,24 @@ module.exports = (robot) ->
       highscoreBoard.removePoints(douche, 50)
       return
     if douche == "@ola"
-      msg.send "That boy needs a spanking, not more douchepoints!"
+      if new_points < 100
+        new_points = 100
+        highscoreBoard.awardPoints(douche, new_points)
+        msg.send "All that boy does is worth at least 100 douchepoints!
+        #{douche} just recived #{new_points}dp and now holds a total of
+        #{highscoreBoard.getScoreForDouche(douche)}"
+        return
+      new_points = new_points + 10
+      highscoreBoard.awardPoints(douche, new_points)
+      msg.send "Nice! #{douche} just recived new douchepoints, have an extra
+      10 just for being you! #{new_points}dp added, and #{douche} now holds
+      a total of #{highscoreBoard.getScoreForDouche(douche)}"
+      return
+    if douche == "@aja"
+      new_points = - new_points
+      highscoreBoard.awardPoints(douche, new_points)
+      msg.send "BAD #{douche}! #{new_points}dp removed, and #{douche} now holds
+      a total of #{highscoreBoard.getScoreForDouche(douche)}"
       return
     highscoreBoard.awardPoints(douche, new_points)
     msg.send "Nice! #{douche} just recived #{new_points}dp and now holds
