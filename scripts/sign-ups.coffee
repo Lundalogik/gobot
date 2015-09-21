@@ -99,6 +99,7 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
+        console.log res
         signups = res.result[0]
         activation = res.result[1]
         if signups > 0
