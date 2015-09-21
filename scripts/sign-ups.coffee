@@ -60,3 +60,49 @@ module.exports = (robot) ->
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
         msg.send "We had #{res.result} sign-ups #{timeframe.replace('_',' ')}"
+
+  # Handels activation count
+  robot.respond /activations ?(.*)/i, (msg) ->
+
+    timeframe = if msg.match[1] then msg.match[1] else "today"
+    countActivations = new Keen.Query "count",
+      eventCollection: "Sales-DealStatusChange"
+      filters:[{"operator":"contains","property_name":"deal.status","property_value":"Testkonto"},{"operator":"contains","property_name":"deal.tags","property_value":"auto signup"}]
+      timeframe: timeframe
+      timezone: "Europe/Stockholm"
+
+    keenClient.run countActivations, (err, res) ->
+      if err
+        console.log 'Keen error:', err
+        msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
+      else
+        msg.send "We had #{res.result} activations #{timeframe.replace('_',' ')}"
+
+  # Handels activation count
+  robot.respond /conversions ?(.*)/i, (msg) ->
+
+    timeframe = if msg.match[1] then msg.match[1] else "today"
+    human_timefram = timeframe.replace("_", " ")
+    countActivations = new Keen.Query "count",
+      eventCollection: "Sales-DealStatusChange"
+      filters:[{"operator":"contains","property_name":"deal.status","property_value":"Testkonto"},{"operator":"contains","property_name":"deal.tags","property_value":"auto signup"}]
+      timeframe: timeframe
+      timezone: "Europe/Stockholm"
+
+    countSignUps = new Keen.Query "count",
+      eventCollection: "Marketsite-TryOutSubmited"
+      timeframe: timeframe
+      timezone: "Europe/Stockholm"
+
+    keenClient.run [countSignUps, countActivations], (err, res) ->
+      if err
+        console.log 'Keen error:', err
+        msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
+      else
+        signups = res.data[0]
+        activation = res.data[1]
+        if signups > 0
+          conversion_rate = Math.round((activation / signups) * 100)
+          msg.send "#{human_timefram} we had #{signups} sign-ups and #{activation} activations, giving us an conversion rate of #{conversion_rate}%"
+        else
+          msg.send "Sorry, we didn't have a single sign-up #{human_timefram}"
