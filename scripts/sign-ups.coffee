@@ -49,7 +49,8 @@ module.exports = (robot) ->
   robot.respond /sign[\s-]?ups ?(.*)/i, (msg) ->
 
     timeframe = if msg.match[1] then msg.match[1] else "today"
-    countSignUps = new Keen.Query "count",
+    countSignUps = new Keen.Query "count_unique",
+      targetProperty: "email"
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: timeframe
       timezone: "Europe/Stockholm"
@@ -89,7 +90,8 @@ module.exports = (robot) ->
       timeframe: timeframe
       timezone: "Europe/Stockholm"
 
-    countSignUps = new Keen.Query "count",
+    countSignUps = new Keen.Query "count_unique",
+      targetProperty: "email"
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: timeframe
       timezone: "Europe/Stockholm"
