@@ -99,8 +99,8 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
-        signups = res.data[0]
-        activation = res.data[1]
+        signups = res.result[0]
+        activation = res.result[1]
         if signups > 0
           conversion_rate = Math.round((activation / signups) * 100)
           msg.send "#{human_timefram} we had #{signups} sign-ups and #{activation} activations, giving us an conversion rate of #{conversion_rate}%"
