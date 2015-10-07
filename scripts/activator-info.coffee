@@ -8,8 +8,8 @@
 #   listens to the standard activation phrase:
 #   "Signup from [email] [???] just activated"
 #
-#   also reads backgrack [email]
-#   or backtrack signup [email]
+#   also reads "gobot backgrack [email]"
+#   or "gobot backtrack signup [email] this_700_days"
 #   or similar
 #
 # Author:
@@ -34,7 +34,7 @@ module.exports = (robot) ->
 
   defalutTimeframePageviews = "this_30_days"
 
-  defaultTimeframeBacktrack = "this_356_days"
+  defaultTimeframeBacktrack = "this_365_days"
 
 
   #handles functions
