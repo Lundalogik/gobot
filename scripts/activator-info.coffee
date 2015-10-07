@@ -60,10 +60,10 @@ module.exports = (robot) ->
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
         if res.result[0]
-          messageBuffer = messageBuffer + "#{email} has, in timeframe '#{timeframeSignups}', signed up at:"
+          messageBuffer += "#{email} has, in timeframe '#{timeframeSignups}', signed up at:"
           for result in res.result
             permanentTracker.push result.permanent_tracker
-            messageBuffer = messageBuffer + "\n" + "#{result.keen.timestamp.replace('T',' ').split('.')[0]} : #{result.url.domain}#{result.url.path}"
+            messageBuffer += "\n" + "#{result.keen.timestamp.replace('T',' ').split('.')[0]} : #{result.url.domain}#{result.url.path}"
 
           msg.send messageBuffer
           messageBuffer = ""
@@ -82,7 +82,7 @@ module.exports = (robot) ->
               msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
             else
               for result in res.result
-                messageBuffer = messageBuffer + "\n" + "#{result.keen.timestamp.replace('T',' ').split('.')[0]} : #{result.url.domain}#{result.url.path}"
+                messageBuffer += "\n" + "#{result.keen.timestamp.replace('T',' ').split('.')[0]} : #{result.url.domain}#{result.url.path}"
 
               msg.send messageBuffer
         else
