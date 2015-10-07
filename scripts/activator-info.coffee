@@ -30,6 +30,11 @@ module.exports = (robot) ->
   emailErrorMsg = "How should i know where that dude / dudette came from? \n
   Read up in keen, slacker! Or ask me again, NICELY."
 
+  timeFrameErrorMsg = "You used a time frame I can't understand,
+  please use a relative time frame from
+  https://keen.io/docs/data-analysis/timeframe/ \n
+  Examples: Today, Yesterday, last_2_months, this_week"
+
   defaultTimeframeSignups = "this_14_days"
 
   defalutTimeframePageviews = "this_30_days"
