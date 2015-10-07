@@ -2,7 +2,7 @@
   "name": "gobot",
   "version": "0.0.0",
   "private": true,
-  "author": "Filip Persson <filip.persson@me.com>",
+  "author": "Filip Persson <filip.persson@me.com>; Johan Svensson <j_svensson@me.com>",
   "description": "A helpful robot for the Go team",
   "dependencies": {
     "hubot": "^2.11.0",
