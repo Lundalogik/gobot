@@ -29,34 +29,50 @@ module.exports = (robot) ->
   formatMoney = (number) ->
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + "kr"
 
+  class Deal
+    constructor: (@coworker, @value) ->
+
   # Handels sign-ups
   robot.respond /deals ?(.*)/i, (msg) ->
 
     timeframe = if msg.match[1] then msg.match[1] else "today"
-    deals = new Keen.Query "extraction",
+    goDeals = new Keen.Query "extraction",
       eventCollection: "Sales-DealWon"
       timeframe: timeframe
       timezone: "Europe/Stockholm"
 
-    keenClient.run deals, (err, res) ->
+    proDeals = new Keen.Query "extraction",
+      eventCollection: "Won deals"
+      timeframe: timeframe
+      timezone: "Europe/Stockholm"
+
+    keenClient.run [goDeals, proDeals], (err, res) ->
       if err
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
 
         # remove deals from non Go-team
-        goWonDealEvents = _.remove res.result, (dealEvent) ->
+        goWonDealEvents = _(res[0].result)
+        .remove (dealEvent) ->
           return dealEvent.deal.responsible.firstName?
+        .map (dealEvent) ->
+          name ="#{dealEvent.deal.responsible.firstName} #{dealEvent.deal.responsible.lastName}"
+          return new Deal(name, dealEvent.deal.value)
+        .value()
 
-        goDealEvents = goWonDealEvents
+        # map pro deals
+        proWonDeals = _.map res[1].result, (dealEvent) ->
+          return new Deal(dealEvent.responsiblesales, dealEvent.totalvalue)
 
+        goDealEvents = goWonDealEvents.concat proWonDeals
         # Money
         highscore = _(goDealEvents)
         .groupBy (dealEvent) ->
-          return dealEvent.deal.responsible.firstName
+          return dealEvent.coworker
         .mapValues (deals) ->
           return amount = _.sum deals, (dealEvent) ->
-            return dealEvent.deal.value
+            return dealEvent.value
         .pairs() #turns object into a array {a:b, c:d} => [[a,b],[b,c]]
         .sortByOrder (pair) ->
           return pair[1]
@@ -67,12 +83,12 @@ module.exports = (robot) ->
         .value()
 
         totalValue = _.sum goDealEvents, (dealEvent) ->
-          return dealEvent.deal.value
+          return dealEvent.value
         # Number of deals
         nbrOfDeals = goDealEvents.length
         nbrOfDealsPerSalesRep = _(goDealEvents)
         .groupBy (dealEvent) ->
-          return dealEvent.deal.responsible.firstName
+          return dealEvent.coworker
         .mapValues (deals) ->
           return amount = deals.length
         .value()
@@ -85,5 +101,5 @@ module.exports = (robot) ->
           totalSales = _.values(listing)[0]
           nbrOfDeals = nbrOfDealsPerSalesRep[coworker]
           averageValue = Math.round(totalSales/nbrOfDeals)
-          msg.send "#{i}. #{coworker}: *#{formatMoney totalSales}kr* _(#{nbrOfDeals} deals, avg: #{formatMoney averageValue})_"
+          msg.send "#{i}. #{coworker}: *#{formatMoney totalSales}* _(#{nbrOfDeals} deals, avg: #{formatMoney averageValue})_"
           i++
