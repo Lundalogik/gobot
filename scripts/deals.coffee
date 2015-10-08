@@ -74,7 +74,7 @@ module.exports = (robot) ->
           coworker = _.keys(listing)[0]
           totalSales = _.values(listing)[0]
           nbrOfDeals = nbrOfDealsPerSalesRep[coworker]
-          averageValue = Math.round(totalValue/nbrOfDeals)
+          averageValue = Math.round(totalSales/nbrOfDeals)
           if coworker != "undefined"
             msg.send "#{i}. #{coworker}: *#{totalSales}kr* _(#{nbrOfDeals} deals, avg: #{averageValue}kr)_"
           i++
