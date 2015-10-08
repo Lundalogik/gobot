@@ -118,11 +118,21 @@ module.exports = (robot) ->
 
 
   #Mr. robot
-  robot.hear messagePatternActivation, (msg) ->
-    activatorEmail = msg.match[1].toLowerCase()     #msg.match[0] is entire message
 
-    getActivatorHistory(msg, activatorEmail, defaultTimeframeSignups, defalutTimeframePageviews)
+  #How the code should look. not working since hear doent hear bots.
+  # robot.hear messagePatternActivation, (msg) ->
+  #   activatorEmail = msg.match[1].toLowerCase()     #msg.match[0] is entire message
+  #
+  #   getActivatorHistory(msg, activatorEmail, defaultTimeframeSignups, defalutTimeframePageviews)
 
+  #Special hack to hear bots:
+
+  robot.catchAll (msg) ->
+    matches = msg.message.text.match(messagePatternActivation)
+    if matches != null && matches.length > 1
+      activatorEmail = matches[1].toLowerCase()     #msg.match[0] is entire message
+      getActivatorHistory(msg, activatorEmail, defaultTimeframeSignups, defalutTimeframePageviews)
+    msg.finish()
 
 
   robot.respond messagePatternBacktrack, (msg) ->
