@@ -57,12 +57,24 @@ module.exports = (robot) ->
 
         totalValue = _.sum res.result, (dealEvent) ->
           return dealEvent.deal.value
+        nbrOfDeals = res.result.length
 
-        msg.send "We have won deal for #{totalValue}kr during #{timeframe.replace('_',' ')}"
+        nbrOfDealsPerSalesRep = _(res.result)
+        .groupBy (dealEvent) ->
+          return dealEvent.deal.responsible.firstName
+        .mapValues (deals) ->
+          return amount = deals.length
+        .value()
+
+        console.log nbrOfDealsPerSalesRep
+
+        msg.send "We have won #{nbrOfDeals} deals during #{timeframe.replace('_',' ')} with a total value of *#{totalValue}kr*"
         i = 1
         _.forEachRight highscore, (listing) ->
           coworker = _.keys(listing)[0]
           totalSales = _.values(listing)[0]
+          nbrOfDeals = nbrOfDealsPerSalesRep[coworker]
+          averageValue = Math.round(totalValue/nbrOfDeals)
           if coworker != "undefined"
-            msg.send "#{i}. #{coworker}: #{totalSales}kr"
+            msg.send "#{i}. #{coworker}: *#{totalSales}kr* _(#{nbrOfDeals} deals, avg: #{averageValue}kr)_"
           i++
