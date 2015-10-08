@@ -40,6 +40,7 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
+        # Money
         highscore = _(res.result)
         .groupBy (dealEvent) ->
           return dealEvent.deal.responsible.firstName
@@ -57,16 +58,15 @@ module.exports = (robot) ->
 
         totalValue = _.sum res.result, (dealEvent) ->
           return dealEvent.deal.value
-        nbrOfDeals = res.result.length
 
+        # Number of deals
+        nbrOfDeals = res.result.length
         nbrOfDealsPerSalesRep = _(res.result)
         .groupBy (dealEvent) ->
           return dealEvent.deal.responsible.firstName
         .mapValues (deals) ->
           return amount = deals.length
         .value()
-
-        console.log nbrOfDealsPerSalesRep
 
         msg.send "We have won #{nbrOfDeals} deals during #{timeframe.replace('_',' ')} with a total value of *#{totalValue}kr*"
         i = 1
