@@ -26,6 +26,9 @@ module.exports = (robot) ->
   https://keen.io/docs/data-analysis/timeframe/ \n
   Examples: Today, Yesterday, last_2_months, this_week"
 
+  formatMoney = (number) ->
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + "kr"
+
   # Handels sign-ups
   robot.respond /deals ?(.*)/i, (msg) ->
 
@@ -40,8 +43,15 @@ module.exports = (robot) ->
         console.log 'Keen error:', err
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
+
+        # remove deals from non Go-team
+        goWonDealEvents = _.remove res.result, (dealEvent) ->
+          return dealEvent.deal.responsible.firstName?
+
+        goDealEvents = goWonDealEvents
+
         # Money
-        highscore = _(res.result)
+        highscore = _(goDealEvents)
         .groupBy (dealEvent) ->
           return dealEvent.deal.responsible.firstName
         .mapValues (deals) ->
@@ -56,25 +66,24 @@ module.exports = (robot) ->
           return listing
         .value()
 
-        totalValue = _.sum res.result, (dealEvent) ->
+        totalValue = _.sum goDealEvents, (dealEvent) ->
           return dealEvent.deal.value
-
         # Number of deals
-        nbrOfDeals = res.result.length
-        nbrOfDealsPerSalesRep = _(res.result)
+        nbrOfDeals = goDealEvents.length
+        nbrOfDealsPerSalesRep = _(goDealEvents)
         .groupBy (dealEvent) ->
           return dealEvent.deal.responsible.firstName
         .mapValues (deals) ->
           return amount = deals.length
         .value()
 
-        msg.send "We have won #{nbrOfDeals} deals during #{timeframe.replace('_',' ')} with a total value of *#{totalValue}kr*"
+
+        msg.send "We have won #{nbrOfDeals} deals during #{timeframe.replace('_',' ')} with a total value of *#{formatMoney totalValue}*"
         i = 1
         _.forEachRight highscore, (listing) ->
           coworker = _.keys(listing)[0]
           totalSales = _.values(listing)[0]
           nbrOfDeals = nbrOfDealsPerSalesRep[coworker]
           averageValue = Math.round(totalSales/nbrOfDeals)
-          if coworker != "undefined"
-            msg.send "#{i}. #{coworker}: *#{totalSales}kr* _(#{nbrOfDeals} deals, avg: #{averageValue}kr)_"
+          msg.send "#{i}. #{coworker}: *#{formatMoney totalSales}kr* _(#{nbrOfDeals} deals, avg: #{formatMoney averageValue})_"
           i++
