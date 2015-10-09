@@ -20,6 +20,7 @@ Keen = require 'keen-js'
 
 module.exports = (robot) ->
 
+#live:
   keenClient = new Keen(
     projectId: process.env.KEEN_PROJECT_ID
     readKey:  process.env.KEEN_READ_KEY
@@ -67,7 +68,7 @@ module.exports = (robot) ->
 
           msg.send messageBuffer
           messageBuffer = ""
-          messageBuffer = "*Visit(s)* in `#{timeframePageviews}` for #{email} (with tracker(s) #{permanentTracker.join(', ')}):"
+          messageBuffer = "*Visit(s)* in `#{timeframePageviews}` for #{email}:"
 
           extractPageviews = new Keen.Query "extraction",
             eventCollection: "Marketsite-Pageview"
@@ -83,7 +84,7 @@ module.exports = (robot) ->
             else
               for result in res.result
                 messageBuffer += "\n" + "#{result.keen.timestamp.replace('T',' ').split('.')[0]} - #{result.url.domain}#{result.url.path}"
-
+              messageBuffer += "\n" + "\n" + "Visits was registered for *#{permanentTracker.length}* devices / cookies"
               msg.send messageBuffer
         else
           msg.send emailErrorMsg
@@ -116,6 +117,20 @@ module.exports = (robot) ->
     \s?(.*)?                                     #optional last word, group 2, preceded by whitespace
     ///i
 
+  messagePatternStalk = ///                     #begin of line
+    (?:stalk\s)                             #dont capture backtrack, but must have this
+    (?:activator\s)?                            #optional, dont capture
+    (?:sign[\s-]?up\s)?                         #optional, dont capture
+    (?:activation\s)?                           #optional, dont capture
+    (?:e[\s-]?mail\s)?                          #optional, dont capture
+    \b(                                         #start of wordblock, group 1
+    [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress
+    @                                           #the sign @
+    [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress, including . and domain
+    )\b                                         #end of wordblock and group 1
+    \s?(.*)?                                     #optional last word, group 2, preceded by whitespace
+    ///i
+
 
   #Mr. robot
 
@@ -136,6 +151,12 @@ module.exports = (robot) ->
 
 
   robot.respond messagePatternBacktrack, (msg) ->
+    timeframeSignups = timeframePageviews = if msg.match[2] then msg.match[2].toLowerCase() else defaultTimeframeBacktrack
+    activatorEmail = msg.match[1].toLowerCase()
+
+    getActivatorHistory(msg, activatorEmail, timeframeSignups, timeframePageviews)
+
+  robot.respond messagePatternStalk, (msg) ->
     timeframeSignups = timeframePageviews = if msg.match[2] then msg.match[2].toLowerCase() else defaultTimeframeBacktrack
     activatorEmail = msg.match[1].toLowerCase()
 
