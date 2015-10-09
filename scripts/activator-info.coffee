@@ -60,14 +60,14 @@ module.exports = (robot) ->
         msg.send timeFrameErrorMsg if err.code == "TimeframeDefinitionError"
       else
         if res.result[0]
-          messageBuffer += "#{email} has, in timeframe '#{timeframeSignups}',  signed up at:"
+          messageBuffer += "*Sigup(s)* in `#{timeframeSignups}` for #{email}:"
           for result in res.result
             permanentTracker.push result.permanent_tracker
             messageBuffer += "\n" + "#{result.keen.timestamp.replace('T',' ').split('.')[0]} - #{result.url.domain}#{result.url.path}"
 
           msg.send messageBuffer
           messageBuffer = ""
-          messageBuffer = "All visits in timeframe '#{timeframePageviews}',  registered for tracker(s): #{permanentTracker.join(', ')}, are:"
+          messageBuffer = "*Visit(s)* in `#{timeframePageviews}` for #{email} (with tracker(s) #{permanentTracker.join(', ')}):"
 
           extractPageviews = new Keen.Query "extraction",
             eventCollection: "Marketsite-Pageview"
