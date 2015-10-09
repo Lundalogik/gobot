@@ -4,4 +4,6 @@ node_modules
 
 .hubot_history
 
+.local_keen_client.coffee
+
 *.rdb
