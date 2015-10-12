@@ -48,7 +48,7 @@ module.exports = (robot) ->
   # Handels sign-ups
   robot.respond /sign[\s-]?ups ?(.*)/i, (msg) ->
 
-    timeframe = if msg.match[1] then msg.match[1] else "today"
+    timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     countSignUps = new Keen.Query "count_unique",
       targetProperty: "email"
       eventCollection: "Marketsite-TryOutSubmited"
@@ -65,7 +65,7 @@ module.exports = (robot) ->
   # Handels activation count
   robot.respond /activations ?(.*)/i, (msg) ->
 
-    timeframe = if msg.match[1] then msg.match[1] else "today"
+    timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     countActivations = new Keen.Query "count",
       eventCollection: "Sales-DealStatusChange"
       filters:[{"operator":"contains","property_name":"deal.status","property_value":"Testkonto"},{"operator":"contains","property_name":"deal.tags","property_value":"auto signup"}]
@@ -82,7 +82,7 @@ module.exports = (robot) ->
   # Handels activation count
   robot.respond /conversions ?(.*)/i, (msg) ->
 
-    timeframe = if msg.match[1] then msg.match[1] else "today"
+    timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     human_timefram = timeframe.replace("_", " ")
     countActivations = new Keen.Query "count",
       eventCollection: "Sales-DealStatusChange"

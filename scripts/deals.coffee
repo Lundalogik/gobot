@@ -35,7 +35,7 @@ module.exports = (robot) ->
   # Handels sign-ups
   robot.respond /deals ?(.*)/i, (msg) ->
 
-    timeframe = if msg.match[1] then msg.match[1] else "today"
+    timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     goDeals = new Keen.Query "extraction",
       eventCollection: "Sales-DealWon"
       timeframe: timeframe
