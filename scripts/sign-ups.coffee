@@ -80,13 +80,35 @@ module.exports = (robot) ->
         msg.send "We had #{res.result} activations #{timeframe.replace('_',' ')}"
 
   # Handels activation count
-  robot.respond /conversions ?(.*)/i, (msg) ->
+  robot.respond /conversions ?(.*) ?(.*)/i, (msg) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
+    country = if msg.match[2] then msg.match[2]
+    filters = [
+      {
+        "operator":"contains",
+        "property_name":"deal.status",
+        "property_value":"Testkonto"},
+      {
+        "operator":"contains",
+        "property_name":"deal.tags",
+        "property_value":"auto signup"
+        }
+      ]
+
+    if country
+      filters.push(
+        {
+          "operator": "eq",
+          "property_name": "country",
+          "property_value": country
+        }
+      )
+
     human_timefram = timeframe.replace("_", " ")
     countActivations = new Keen.Query "count",
       eventCollection: "Sales-DealStatusChange"
-      filters:[{"operator":"contains","property_name":"deal.status","property_value":"Testkonto"},{"operator":"contains","property_name":"deal.tags","property_value":"auto signup"}]
+      filters: filters
       timeframe: timeframe
       timezone: "Europe/Stockholm"
 
