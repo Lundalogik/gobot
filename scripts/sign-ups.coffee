@@ -80,7 +80,7 @@ module.exports = (robot) ->
         msg.send "We had #{res.result} activations #{timeframe.replace('_',' ')}"
 
   # Handels activation count
-  robot.respond /conversions ?(.*) ?(.*)/i, (msg) ->
+  robot.respond /conversions ?(\w*) ?(\w*)/i, (msg) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     country = if msg.match[2] then msg.match[2]
