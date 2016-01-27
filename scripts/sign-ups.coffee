@@ -26,25 +26,29 @@ module.exports = (robot) ->
   https://keen.io/docs/data-analysis/timeframe/ \n
   Examples: Today, Yesterday, last_2_months, this_week"
 
-  sign_up_query = new Keen.Query "count_unique",
-    targetProperty: "email"
-    eventCollection: "Marketsite-TryOutSubmited"
-    timezone: "Europe/Stockholm"
+  create_signup_query = (timeframe)->
+    return new Keen.Query "count_unique",
+      targetProperty: "email"
+      eventCollection: "Marketsite-TryOutSubmited"
+      timezone: "Europe/Stockholm"
+      timeframe: timeframe
 
-  activations_query = new Keen.Query "count",
-    eventCollection: "Sales-DealStatusChange"
-    filters:[
-      {
-        "operator":"contains",
-        "property_name":"deal.status",
-        "property_value":"Testkonto"},
-      {
-        "operator":"contains",
-        "property_name":"deal.tags",
-        "property_value":"auto signup"
-      }
-    ]
-    timezone: "Europe/Stockholm"
+  create_activations_query = (timeframe) ->
+    activations_query = new Keen.Query "count",
+      eventCollection: "Sales-DealStatusChange"
+      filters:[
+        {
+          "operator":"contains",
+          "property_name":"deal.status",
+          "property_value":"Testkonto"},
+        {
+          "operator":"contains",
+          "property_name":"deal.tags",
+          "property_value":"auto signup"
+        }
+      ]
+      timezone: "Europe/Stockholm"
+      timeframe: timeframe
 
   # Handels goals for Sign-ups
   robot.respond /sign[\s-]?up goals ?(.*)/i, (msg) ->
@@ -67,8 +71,7 @@ module.exports = (robot) ->
   robot.respond /sign[\s-]?ups ?(.*)/i, (msg) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
-    countSignUps = sign_up_query
-    countSignUps.params.timeframe = timeframe
+    countSignUps = create_signup_query(timeframe)
 
     keenClient.run countSignUps, (err, res) ->
       if err
@@ -81,8 +84,7 @@ module.exports = (robot) ->
   robot.respond /activations ?(.*)/i, (msg) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
-    countActivations = activations_query
-    countActivations.params.timeframe = timeframe
+    countActivations = create_activations_query(timeframe)
 
     console.log countActivations
     keenClient.run countActivations, (err, res) ->
@@ -100,11 +102,8 @@ module.exports = (robot) ->
 
     human_timefram = timeframe.replace("_", " ")
 
-    countActivations = activations_query
-    countActivations.params.timeframe = timeframe
-
-    countSignUps = sign_up_query
-    countSignUps.params.timeframe = timeframe
+    countActivations = create_activations_query(timeframe)
+    countSignUps = create_signup_query(timeframe)
 
     if country
       country_try_out_condition = {
