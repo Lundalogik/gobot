@@ -117,7 +117,6 @@ module.exports = (robot) ->
         "property_name": "deal.tags",
         "property_value": ".#{country}"
       }
-      console.log countActivations
       countActivations.params.filters.push(country_deal_condition)
       countSignUps.params.filters = [country_try_out_condition]
 
