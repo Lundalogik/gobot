@@ -132,9 +132,8 @@ module.exports = (robot) ->
           conversion_rate = Math.round((activation / signups) * 100)
           message = "
           #{human_timefram} we had #{signups} sign-ups and
-           #{activation} activations,
-           giving us an conversion rate of #{conversion_rate}%
-           "
+ #{activation} activations,
+ giving us an conversion rate of #{conversion_rate}%"
           if country
             message += "in #{country}"
           msg.send message
