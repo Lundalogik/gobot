@@ -26,7 +26,25 @@ module.exports = (robot) ->
   https://keen.io/docs/data-analysis/timeframe/ \n
   Examples: Today, Yesterday, last_2_months, this_week"
 
+  sign_up_query = new Keen.Query "count_unique",
+    targetProperty: "email"
+    eventCollection: "Marketsite-TryOutSubmited"
+    timezone: "Europe/Stockholm"
 
+  activations_query = new Keen.Query "count",
+    eventCollection: "Sales-DealStatusChange"
+    filters:[
+      {
+        "operator":"contains",
+        "property_name":"deal.status",
+        "property_value":"Testkonto"},
+      {
+        "operator":"contains",
+        "property_name":"deal.tags",
+        "property_value":"auto signup"
+      }
+    ]
+    timezone: "Europe/Stockholm"
 
   # Handels goals for Sign-ups
   robot.respond /sign[\s-]?up goals ?(.*)/i, (msg) ->
@@ -49,11 +67,8 @@ module.exports = (robot) ->
   robot.respond /sign[\s-]?ups ?(.*)/i, (msg) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
-    countSignUps = new Keen.Query "count_unique",
-      targetProperty: "email"
-      eventCollection: "Marketsite-TryOutSubmited"
-      timeframe: timeframe
-      timezone: "Europe/Stockholm"
+    countSignUps = sign_up_query
+    countSignUps.timeframe = timeframe
 
     keenClient.run countSignUps, (err, res) ->
       if err
@@ -66,11 +81,8 @@ module.exports = (robot) ->
   robot.respond /activations ?(.*)/i, (msg) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
-    countActivations = new Keen.Query "count",
-      eventCollection: "Sales-DealStatusChange"
-      filters:[{"operator":"contains","property_name":"deal.status","property_value":"Testkonto"},{"operator":"contains","property_name":"deal.tags","property_value":"auto signup"}]
-      timeframe: timeframe
-      timezone: "Europe/Stockholm"
+    countActivations = activations_query
+    countActivations.timeframe = timeframe
 
     keenClient.run countActivations, (err, res) ->
       if err
@@ -84,19 +96,14 @@ module.exports = (robot) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     country = if msg.match[2] then msg.match[2]
-    deal_filters = [
-      {
-        "operator":"contains",
-        "property_name":"deal.status",
-        "property_value":"Testkonto"},
-      {
-        "operator":"contains",
-        "property_name":"deal.tags",
-        "property_value":"auto signup"
-        }
-      ]
 
-    try_out_filter = []
+    human_timefram = timeframe.replace("_", " ")
+
+    countActivations = activations_query
+    countActivations.timeframe = timeframe
+
+    countSignUps = sign_up_query
+    countSignUps.timeframe = timeframe
 
     if country
       country_try_out_condition = {
@@ -111,23 +118,8 @@ module.exports = (robot) ->
         "property_value": ".#{country}"
       }
 
-      deal_filters.push(country_deal_condition)
-      try_out_filter.push(country_try_out_condition)
-
-    human_timefram = timeframe.replace("_", " ")
-
-    countActivations = new Keen.Query "count",
-      eventCollection: "Sales-DealStatusChange"
-      filters: deal_filters
-      timeframe: timeframe
-      timezone: "Europe/Stockholm"
-
-    countSignUps = new Keen.Query "count_unique",
-      targetProperty: "email"
-      eventCollection: "Marketsite-TryOutSubmited"
-      timeframe: timeframe
-      filters: try_out_filter
-      timezone: "Europe/Stockholm"
+      countActivations.filters.push(country_deal_condition)
+      countSignUps.filters = [country_try_out_condition]
 
     keenClient.run [countSignUps, countActivations], (err, res) ->
       if err
@@ -138,6 +130,13 @@ module.exports = (robot) ->
         activation = res[1].result
         if signups > 0
           conversion_rate = Math.round((activation / signups) * 100)
-          msg.send "#{human_timefram} we had #{signups} sign-ups and #{activation} activations, giving us an conversion rate of #{conversion_rate}%"
+          message = "
+          #{human_timefram} we had #{signups} sign-ups and
+           #{activation} activations,
+           giving us an conversion rate of #{conversion_rate}%
+           "
+          if country
+            message += "in #{country}"
+          msg.send message
         else
           msg.send "Sorry, we didn't have a single sign-up #{human_timefram}"
