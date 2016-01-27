@@ -99,13 +99,20 @@ module.exports = (robot) ->
     try_out_filter = []
 
     if country
-      country_condition = {
+      country_try_out_condition = {
         "operator": "eq",
         "property_name": "country",
         "property_value": country
       }
-      deal_filters.push(country_condition)
-      try_out_filter.push(country_condition)
+
+      country_deal_condition =  {
+        "operator": "contains",
+        "property_name": "deal.tags",
+        "property_value": ".#{country}"
+      }
+
+      deal_filters.push(country_deal_condition)
+      try_out_filter.push(country_try_out_condition)
 
     human_timefram = timeframe.replace("_", " ")
 
