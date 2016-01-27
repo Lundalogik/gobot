@@ -68,7 +68,7 @@ module.exports = (robot) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     countSignUps = sign_up_query
-    countSignUps.timeframe = timeframe
+    countSignUps.params.timeframe = timeframe
 
     keenClient.run countSignUps, (err, res) ->
       if err
@@ -82,7 +82,7 @@ module.exports = (robot) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     countActivations = activations_query
-    countActivations.timeframe = timeframe
+    countActivations.params.timeframe = timeframe
 
     keenClient.run countActivations, (err, res) ->
       if err
@@ -100,10 +100,10 @@ module.exports = (robot) ->
     human_timefram = timeframe.replace("_", " ")
 
     countActivations = activations_query
-    countActivations.timeframe = timeframe
+    countActivations.params.timeframe = timeframe
 
     countSignUps = sign_up_query
-    countSignUps.timeframe = timeframe
+    countSignUps.params.timeframe = timeframe
 
     if country
       country_try_out_condition = {
@@ -118,8 +118,8 @@ module.exports = (robot) ->
         "property_value": ".#{country}"
       }
       console.log countActivations
-      countActivations.filters.push(country_deal_condition)
-      countSignUps.filters = [country_try_out_condition]
+      countActivations.params.filters.push(country_deal_condition)
+      countSignUps.params.filters = [country_try_out_condition]
 
     keenClient.run [countSignUps, countActivations], (err, res) ->
       if err
