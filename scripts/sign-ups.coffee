@@ -134,7 +134,7 @@ module.exports = (robot) ->
  #{activation} activations,
  giving us an conversion rate of #{conversion_rate}%"
           if country
-            message += "in #{country}"
+            message += " in #{country}"
           msg.send message
         else
           msg.send "Sorry, we didn't have a single sign-up #{human_timefram}"
