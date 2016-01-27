@@ -84,7 +84,7 @@ module.exports = (robot) ->
 
     timeframe = (if msg.match[1] then msg.match[1] else "today").toLowerCase()
     country = if msg.match[2] then msg.match[2]
-    filters = [
+    deal_filters = [
       {
         "operator":"contains",
         "property_name":"deal.status",
@@ -96,19 +96,22 @@ module.exports = (robot) ->
         }
       ]
 
+    try_out_filter = []
+
     if country
-      filters.push(
-        {
-          "operator": "eq",
-          "property_name": "country",
-          "property_value": country
-        }
-      )
+      country_condition = {
+        "operator": "eq",
+        "property_name": "country",
+        "property_value": country
+      }
+      deal_filters.push(country_condition)
+      try_out_filter.push(country_condition)
 
     human_timefram = timeframe.replace("_", " ")
+
     countActivations = new Keen.Query "count",
       eventCollection: "Sales-DealStatusChange"
-      filters: filters
+      filters: deal_filters
       timeframe: timeframe
       timezone: "Europe/Stockholm"
 
@@ -116,6 +119,7 @@ module.exports = (robot) ->
       targetProperty: "email"
       eventCollection: "Marketsite-TryOutSubmited"
       timeframe: timeframe
+      filters: try_out_filter
       timezone: "Europe/Stockholm"
 
     keenClient.run [countSignUps, countActivations], (err, res) ->
