@@ -84,6 +84,7 @@ module.exports = (robot) ->
     countActivations = activations_query
     countActivations.params.timeframe = timeframe
 
+    console.log countActivations
     keenClient.run countActivations, (err, res) ->
       if err
         console.log 'Keen error:', err
