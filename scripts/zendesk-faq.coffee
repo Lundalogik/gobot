@@ -13,8 +13,9 @@
 
 module.exports = (robot) ->
 
-  zendeskURL = 'https://lime-go.zendesk.com'
+  zendeskURL = 'https://faq.lundalogik.com'
   search_url = '/api/v2/help_center/articles/search.json?query='
+  category_filter = '&category=200908849&locale=en-gb'
 
   class FAQArticle
     constructor: (rawArticle) ->
@@ -38,7 +39,7 @@ module.exports = (robot) ->
     if not query
       sendMsg "You didn't provide a search query!"
       return
-    robot.http("#{zendeskURL}#{search_url}#{encodeURIComponent(query)}")
+    robot.http("#{zendeskURL}#{search_url}#{encodeURIComponent(query)}#{category_filter}")
     .header('Accept', 'application/json')
     .get() (err, res, body) ->
       if err
