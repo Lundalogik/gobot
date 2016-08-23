@@ -65,7 +65,7 @@ module.exports = (robot) ->
         },
         {
           "operator": "not_contains",
-          "property_name": "email",
+          "property_name": "person.email",
           "property_value": "@lime-go"
         }
       ]
