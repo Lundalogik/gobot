@@ -32,6 +32,18 @@ module.exports = (robot) ->
       eventCollection: "Marketsite-TryOutSubmited"
       timezone: "Europe/Stockholm"
       timeframe: timeframe
+      filters:[
+        {
+          "operator": "not_contains",
+          "property_name": "email",
+          "property_value": "@lundalogik"
+        },
+        {
+          "operator": "not_contains",
+          "property_name": "email",
+          "property_value": "@lime-go"
+        }
+      ]
 
   create_activations_query = (timeframe) ->
     activations_query = new Keen.Query "count",
@@ -45,6 +57,16 @@ module.exports = (robot) ->
           "operator":"contains",
           "property_name":"deal.tags",
           "property_value":"auto signup"
+        },
+        {
+          "operator": "not_contains",
+          "property_name": "person.email",
+          "property_value": "@lundalogik"
+        },
+        {
+          "operator": "not_contains",
+          "property_name": "email",
+          "property_value": "@lime-go"
         }
       ]
       timezone: "Europe/Stockholm"
