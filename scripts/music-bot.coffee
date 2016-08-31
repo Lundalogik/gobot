@@ -43,7 +43,7 @@ grantClient = ->
 getSong = (feeling, res) -> 
   spotifyApi.getPlaylistTracks(playlists[feeling].owner, playlists[feeling].uri).then ((data) ->
     res.reply '<a href="' + data.items[Math.floor(Math.random() * (data.items.length - 1))].track.uri + '"/>'
-    return
+    return 
   ), (err) ->
     console.error err
     return
