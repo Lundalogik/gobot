@@ -92,19 +92,19 @@ module.exports = (robot) ->
 
   #handles message patterns
   messagePatternActivation = ///                #begin of line
-    (?:Trial.Account.)                          #dont capture start of sentence "." is space
+    (?:Trial.Account.)                          #sentence should also contain "a new deal"
+    (?:.*)                                      #any characters / spaces. dont capture
+    (?:Hen.nås.på:.)                            #dont capture start of sentence "." is space
     \b(                                         #start of wordblock, group 1
     [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress
     @                                           #the sign @
     [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress, including . and domain
     )\b                                         #end of wordblock and group 1
     (?:.*)                                      #any characters / spaces. dont capture
-    (?:Hen.)                                    #sentence should also contain "a new deal"
-    (?:.*)                                      #any characters / spaces. dont capture
     ///i                                        #end of line and ignore case
 
   messagePatternBacktrack = ///                 #begin of line
-    (?:backtrack\scrm\s)                             #dont capture backtrack, but must have this
+    (?:backtrack\scrm\s)                        #dont capture backtrack, but must have this
     (?:activator\s)?                            #optional, dont capture
     (?:sign[\s-]?up\s)?                         #optional, dont capture
     (?:activation\s)?                           #optional, dont capture
@@ -118,7 +118,7 @@ module.exports = (robot) ->
     ///i
 
   messagePatternStalk = ///                     #begin of line
-    (?:stalk\scrm\s)                                 #dont capture backtrack, but must have this
+    (?:stalk\scrm\s)                            #dont capture backtrack, but must have this
     (?:activator\s)?                            #optional, dont capture
     (?:sign[\s-]?up\s)?                         #optional, dont capture
     (?:activation\s)?                           #optional, dont capture
@@ -158,7 +158,7 @@ module.exports = (robot) ->
 
   robot.respond messagePatternStalk, (msg) ->
     console.log('stalking crm user, woken by command:')
-    console.log(msg)
+    console.log(msg.match[1])
     timeframeSignups = timeframePageviews = if msg.match[2] then msg.match[2].toLowerCase() else defaultTimeframeBacktrack
     activatorEmail = msg.match[1].toLowerCase()
 
