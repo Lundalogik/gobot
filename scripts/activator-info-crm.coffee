@@ -104,7 +104,7 @@ module.exports = (robot) ->
     ///i                                        #end of line and ignore case
 
   messagePatternBacktrack = ///                 #begin of line
-    (?:backtrack\s)                             #dont capture backtrack, but must have this
+    (?:backtrack\scrm)                             #dont capture backtrack, but must have this
     (?:activator\s)?                            #optional, dont capture
     (?:sign[\s-]?up\s)?                         #optional, dont capture
     (?:activation\s)?                           #optional, dont capture
@@ -118,7 +118,7 @@ module.exports = (robot) ->
     ///i
 
   messagePatternStalk = ///                     #begin of line
-    (?:stalk\s)                                 #dont capture backtrack, but must have this
+    (?:stalk\scrm)                                 #dont capture backtrack, but must have this
     (?:activator\s)?                            #optional, dont capture
     (?:sign[\s-]?up\s)?                         #optional, dont capture
     (?:activation\s)?                           #optional, dont capture
