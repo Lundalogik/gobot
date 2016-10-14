@@ -22,9 +22,9 @@ module.exports = (robot) ->
 
 #live:
   keenClient = new Keen(
-    projectId: process.env.KEEN_PROJECT_ID
-    readKey:  process.env.KEEN_READ_KEY
-    masterKey:  process.env.KEEN_MASTER_KEY
+    projectId: process.env.KEEN_PROJECT_ID_CRM
+    readKey:  process.env.KEEN_READ_KEY_CRM
+    masterKey:  process.env.KEEN_MASTER_KEY_CRM
   )
 
   #standard variables
@@ -92,14 +92,14 @@ module.exports = (robot) ->
 
   #handles message patterns
   messagePatternActivation = ///                #begin of line
-    (?:Signup.from.)                            #dont capture start of sentence "." is space
+    (?:Trial.Account.från.)                     #dont capture start of sentence "." is space
     \b(                                         #start of wordblock, group 1
     [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress
     @                                           #the sign @
     [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress, including . and domain
     )\b                                         #end of wordblock and group 1
     (?:.*)                                      #any characters / spaces. dont capture
-    (?:a.new.deal)                              #sentence should also contain "a new deal"
+    (?:hen.nås.på)                              #sentence should also contain "a new deal"
     (?:.*)                                      #any characters / spaces. dont capture
     ///i                                        #end of line and ignore case
 
@@ -143,9 +143,9 @@ module.exports = (robot) ->
   #Special hack to hear bots:
 
   robot.catchAll (msg) ->
-    matches = msg.message.text.match(messagePatternActivation)
-    if matches != null && matches.length > 1
-      activatorEmail = matches[1].toLowerCase()     #msg.match[0] is entire message
+    matchesCRM = msg.message.text.match(messagePatternActivation)
+    if matchesCRM != null && matchesCRM.length > 1
+      activatorEmail = matchesCRM[1].toLowerCase()     #msg.match[0] is entire message
       getActivatorHistory(msg, activatorEmail, defaultTimeframeSignups, defalutTimeframePageviews)
     msg.finish()
 
