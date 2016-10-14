@@ -92,14 +92,14 @@ module.exports = (robot) ->
 
   #handles message patterns
   messagePatternActivation = ///                #begin of line
-    (?:Trial.Account.från.)                     #dont capture start of sentence "." is space
+    (?:Trial.Account.)                          #dont capture start of sentence "." is space
     \b(                                         #start of wordblock, group 1
     [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress
     @                                           #the sign @
     [a-z0-9._%+#-_~!$&'()*,;=:"<>[\\\]]+        #any character allowed in email adress, including . and domain
     )\b                                         #end of wordblock and group 1
     (?:.*)                                      #any characters / spaces. dont capture
-    (?:hen.nås.på)                              #sentence should also contain "a new deal"
+    (?:Hen.)                                    #sentence should also contain "a new deal"
     (?:.*)                                      #any characters / spaces. dont capture
     ///i                                        #end of line and ignore case
 
