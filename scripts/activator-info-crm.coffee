@@ -104,7 +104,7 @@ module.exports = (robot) ->
     ///i                                        #end of line and ignore case
 
   messagePatternBacktrack = ///                 #begin of line
-    (?:backtrack\scrm)                             #dont capture backtrack, but must have this
+    (?:backtrack\scrm\s)                             #dont capture backtrack, but must have this
     (?:activator\s)?                            #optional, dont capture
     (?:sign[\s-]?up\s)?                         #optional, dont capture
     (?:activation\s)?                           #optional, dont capture
@@ -118,7 +118,7 @@ module.exports = (robot) ->
     ///i
 
   messagePatternStalk = ///                     #begin of line
-    (?:stalk\scrm)                                 #dont capture backtrack, but must have this
+    (?:stalk\scrm\s)                                 #dont capture backtrack, but must have this
     (?:activator\s)?                            #optional, dont capture
     (?:sign[\s-]?up\s)?                         #optional, dont capture
     (?:activation\s)?                           #optional, dont capture
@@ -157,6 +157,8 @@ module.exports = (robot) ->
     getActivatorHistory(msg, activatorEmail, timeframeSignups, timeframePageviews)
 
   robot.respond messagePatternStalk, (msg) ->
+    console.log('stalking crm user, woken by command:')
+    console.log(msg)
     timeframeSignups = timeframePageviews = if msg.match[2] then msg.match[2].toLowerCase() else defaultTimeframeBacktrack
     activatorEmail = msg.match[1].toLowerCase()
 
