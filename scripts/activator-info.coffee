@@ -161,6 +161,7 @@ module.exports = (robot) ->
   #Special hack to hear bots:
 
   robot.catchAll (msg) ->
+    console.log('kalle')
     matches = msg.message.text.match(messagePatternActivation)
     if matches != null && matches.length > 1
       activatorEmail = matches[1].toLowerCase()     #msg.match[0] is entire message
