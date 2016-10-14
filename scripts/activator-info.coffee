@@ -165,13 +165,12 @@ module.exports = (robot) ->
     if matches != null && matches.length > 1
       activatorEmail = matches[1].toLowerCase()     #msg.match[0] is entire message
       getActivatorHistory(msg, activatorEmail, defaultTimeframeSignups, defalutTimeframePageviews, keenClient)
-    msg.finish()
 
-  robot.catchAll (msg) ->
-    matches = msg.message.text.match(messagePatternActivationCRM)
-    if matches != null && matches.length > 1
-      activatorEmail = matches[1].toLowerCase()     #msg.match[0] is entire message
+    matchesCRM = msg.message.text.match(messagePatternActivationCRM)
+    if matchesCRM != null && matchesCRM.length > 1
+      activatorEmail = matchesCRM[1].toLowerCase()     #msg.match[0] is entire message
       getActivatorHistory(msg, activatorEmail, defaultTimeframeSignups, defalutTimeframePageviews, keenClientCRM)
+
     msg.finish()
 
 
