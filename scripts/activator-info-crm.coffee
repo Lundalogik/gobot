@@ -92,7 +92,7 @@ module.exports = (robot) ->
 
   #handles message patterns
   messagePatternActivation = ///                #begin of line
-    (?:Trial.Account.)                          #sentence should also contain "a new deal"
+    (?:Trial.Account.|Signup.från.)             #sentence should also contain "a new deal"
     (?:.*)                                      #any characters / spaces. dont capture
     (?:Hen.nås.på:.)                            #dont capture start of sentence "." is space
     \b(                                         #start of wordblock, group 1
