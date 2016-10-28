@@ -45,6 +45,8 @@ module.exports = (robot) ->
 
   #handles functions
   getActivatorHistory = (msg, email, timeframeSignups, timeframePageviews) ->
+    console.log('noticed some commands in message. registered email and timeframes as:')
+    console.log(email, timeframeSignups, timeframePageviews)
     permanentTracker = []
     messageBuffer = ""
 

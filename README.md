@@ -14,7 +14,14 @@ You can test your hubot by running the following.
 
 You can start gobot locally by running:
 
-    % bin/hubot
+    % bin/hubot --name gobot
+
+To use it with readablity from keen and other stuff, start as:
+    
+    % env KEEN_PROJECT_ID=XXX KEEN_READ_KEY=XXX KEEN_MASTER_KEY=XXX bin/hubot --name gobot
+
+No need for dubbelfnuttar, but you need to lookup the variables yourself.
+
 
 You'll see some start up output about where your scripts come from and a
 prompt:
@@ -32,6 +39,13 @@ Then you can interact with gobot by typing `gobot help`.
     convert me <expression> to <units> - Convert expression to given units.
     help - Displays all of the help commands that Hubot knows about.
     ...
+
+#### Testing stalker / activator script:
+Choose an email that recently registered. post this in the hubot (gobot) shell:
+    
+    % Signup from robert.barany.01@gmail.com :se: just activated their :go:-account! A new deal with robert.barany.01@gmail.com is ready to worked on!
+
+Where the first time the email is written (robert.barany.01@gmail.com) is the one that is backtracked.
 
 
 ### Scripting
