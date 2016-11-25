@@ -40,6 +40,19 @@ Then you can interact with gobot by typing `gobot help`.
     help - Displays all of the help commands that Hubot knows about.
     ...
 
+If you install redis locally you can use:
+    
+    redis-server
+    redis-cli ping
+
+To set it up and verify connectivity. Some useful commands are:
+    
+    KEYS *
+    get hubot:storage
+    FLUSHALL
+    Del hubot:storage
+
+
 #### Testing stalker / activator script:
 Choose an email that recently registered. post this in the hubot (gobot) shell:
     
